@@ -4,12 +4,12 @@
  * WeChat + ACP (Agent Client Protocol) adapter.
  *
  * Usage:
- *   npx tsx main.ts login                                # QR-code login
- *   npx tsx main.ts start -- <command> [args...]          # Start bot
+ *   npx weixin-acp login                          # QR-code login
+ *   npx weixin-acp start -- <command> [args...]    # Start bot
  *
  * Examples:
- *   npx tsx main.ts start -- npx @zed-industries/codex-acp
- *   npx tsx main.ts start -- node ./my-agent.js
+ *   npx weixin-acp start -- codex-acp
+ *   npx weixin-acp start -- node ./my-agent.js
  */
 
 import { login, start } from "weixin-agent-sdk";
@@ -29,7 +29,7 @@ async function main() {
       const ddIndex = process.argv.indexOf("--");
       if (ddIndex === -1 || ddIndex + 1 >= process.argv.length) {
         console.error("错误: 请在 -- 后指定 ACP agent 启动命令");
-        console.error("示例: npx tsx main.ts start -- npx @zed-industries/codex-acp");
+        console.error("示例: npx weixin-acp start -- codex-acp");
         process.exit(1);
       }
 
@@ -57,15 +57,15 @@ async function main() {
     }
 
     default:
-      console.log(`weixin-agent-acp — 微信 + ACP 适配器
+      console.log(`weixin-acp — 微信 + ACP 适配器
 
 用法:
-  npx tsx main.ts login                              扫码登录微信
-  npx tsx main.ts start -- <command> [args...]        启动 bot
+  npx weixin-acp login                          扫码登录微信
+  npx weixin-acp start -- <command> [args...]    启动 bot
 
 示例:
-  npx tsx main.ts start -- npx @zed-industries/codex-acp
-  npx tsx main.ts start -- node ./my-agent.js`);
+  npx weixin-acp start -- codex-acp
+  npx weixin-acp start -- node ./my-agent.js`);
       break;
   }
 }

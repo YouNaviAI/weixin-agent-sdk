@@ -15,45 +15,18 @@ packages/
 
 ## ACP 适配器
 
-[ACP (Agent Client Protocol)](https://agentclientprotocol.com/) 是一个开放的 Agent 通信协议。如果你已有兼容 ACP 的 agent，可以直接通过 `agent-acp` 适配器接入微信，无需编写任何代码。
+[ACP (Agent Client Protocol)](https://agentclientprotocol.com/) 是一个开放的 Agent 通信协议。如果你已有兼容 ACP 的 agent，可以直接通过 [`weixin-acp`](https://www.npmjs.com/package/weixin-acp) 接入微信，无需编写任何代码。
 
 ```bash
-# 安装依赖
-pnpm install
-
-cd packages/agent-acp
-
 # 扫码登录
-npx tsx main.ts login
+npx weixin-acp login
 
 # 启动（-- 后面跟 ACP agent 的启动命令）
-npx tsx main.ts start -- codex-acp
-npx tsx main.ts start -- kimi acp
+npx weixin-acp start -- codex-acp
+npx weixin-acp start -- kimi acp
 ```
 
-`--` 后面的部分就是你的 ACP agent 启动命令，适配器会自动以子进程方式启动它，通过 JSON-RPC over stdio 进行通信。
-
-## OpenAI 示例
-
-```bash
-# 安装依赖
-pnpm install
-
-# 扫码登录微信
-pnpm run login -w packages/example-openai
-
-# 启动 bot
-OPENAI_API_KEY=sk-xxx pnpm run start -w packages/example-openai
-```
-
-支持的环境变量：
-
-| 变量 | 必填 | 说明 |
-|------|------|------|
-| `OPENAI_API_KEY` | 是 | OpenAI API Key |
-| `OPENAI_BASE_URL` | 否 | 自定义 API 地址（兼容 OpenAI 接口的第三方服务） |
-| `OPENAI_MODEL` | 否 | 模型名称，默认 `gpt-5.4` |
-| `SYSTEM_PROMPT` | 否 | 系统提示词 |
+`--` 后面的部分就是你的 ACP agent 启动命令，`weixin-acp` 会自动以子进程方式启动它，通过 JSON-RPC over stdio 进行通信。
 
 ## 自定义 Agent
 
@@ -130,6 +103,29 @@ const myAgent: Agent = {
 await login();
 await start(myAgent);
 ```
+
+### OpenAI 示例
+
+`packages/example-openai/` 是一个完整的 OpenAI Agent 实现，支持多轮对话和图片输入：
+
+```bash
+pnpm install
+
+# 扫码登录微信
+pnpm run login -w packages/example-openai
+
+# 启动 bot
+OPENAI_API_KEY=sk-xxx pnpm run start -w packages/example-openai
+```
+
+支持的环境变量：
+
+| 变量 | 必填 | 说明 |
+|------|------|------|
+| `OPENAI_API_KEY` | 是 | OpenAI API Key |
+| `OPENAI_BASE_URL` | 否 | 自定义 API 地址（兼容 OpenAI 接口的第三方服务） |
+| `OPENAI_MODEL` | 否 | 模型名称，默认 `gpt-5.4` |
+| `SYSTEM_PROMPT` | 否 | 系统提示词 |
 
 ## 支持的消息类型
 
