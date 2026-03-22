@@ -29,6 +29,8 @@ npx weixin-acp start -- kimi acp         // https://moonshotai.github.io/kimi-cl
 
 `--` 后面的部分就是你的 ACP agent 启动命令，`weixin-acp` 会自动以子进程方式启动它，通过 JSON-RPC over stdio 进行通信。
 
+更多 ACP agent 请参考 [ACP agent 列表](https://agentclientprotocol.com/get-started/agents)。
+
 ## 自定义 Agent
 
 SDK 只导出三样东西：
