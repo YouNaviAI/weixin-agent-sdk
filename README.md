@@ -18,6 +18,9 @@ packages/
 [ACP (Agent Client Protocol)](https://agentclientprotocol.com/) 是一个开放的 Agent 通信协议。如果你已有兼容 ACP 的 agent，可以直接通过 `agent-acp` 适配器接入微信，无需编写任何代码。
 
 ```bash
+# 安装依赖
+pnpm install
+
 cd packages/agent-acp
 
 # 扫码登录
@@ -34,13 +37,13 @@ npx tsx main.ts start -- kimi acp
 
 ```bash
 # 安装依赖
-npm install
+pnpm install
 
 # 扫码登录微信
-npm run login -w packages/example-openai
+pnpm run login -w packages/example-openai
 
 # 启动 bot
-OPENAI_API_KEY=sk-xxx npm run start -w packages/example-openai
+OPENAI_API_KEY=sk-xxx pnpm run start -w packages/example-openai
 ```
 
 支持的环境变量：
