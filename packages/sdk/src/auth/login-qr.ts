@@ -108,6 +108,7 @@ async function pollQRStatus(apiBaseUrl: string, qrcode: string): Promise<StatusR
 }
 
 export type WeixinQrStartResult = {
+  qrcode?: string;
   qrcodeUrl?: string;
   message: string;
   sessionKey: string;
@@ -138,6 +139,7 @@ export async function startWeixinLoginWithQr(opts: {
   const existing = activeLogins.get(sessionKey);
   if (!opts.force && existing && isLoginFresh(existing) && existing.qrcodeUrl) {
     return {
+      qrcode: existing.qrcode,
       qrcodeUrl: existing.qrcodeUrl,
       message: "二维码已就绪，请使用微信扫描。",
       sessionKey,
@@ -173,6 +175,7 @@ export async function startWeixinLoginWithQr(opts: {
     activeLogins.set(sessionKey, login);
 
     return {
+      qrcode: qrResponse.qrcode,
       qrcodeUrl: qrResponse.qrcode_img_content,
       message: "使用微信扫描以下二维码，以完成连接。",
       sessionKey,

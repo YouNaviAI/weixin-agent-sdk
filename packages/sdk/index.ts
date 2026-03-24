@@ -11,8 +11,14 @@ export { sendWeixinMediaFile } from "./src/messaging/send-media.js";
 // contextToken 管理
 export { getContextToken, setContextToken } from "./src/messaging/inbound.js";
 
-// 账号解析
-export { resolveWeixinAccount, listWeixinAccountIds } from "./src/auth/accounts.js";
+// 账号解析与管理
+export {
+  resolveWeixinAccount,
+  listWeixinAccountIds,
+  normalizeAccountId,
+  saveWeixinAccount,
+  registerWeixinAccountId,
+} from "./src/auth/accounts.js";
 export type { ResolvedWeixinAccount } from "./src/auth/accounts.js";
 
 // API 类型
