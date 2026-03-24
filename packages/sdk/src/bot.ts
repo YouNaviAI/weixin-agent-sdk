@@ -73,6 +73,7 @@ export async function login(opts?: LoginOptions): Promise<string> {
     apiBaseUrl,
     timeoutMs: 480_000,
     botType: DEFAULT_ILINK_BOT_TYPE,
+    log: (msg) => log(msg),
   });
 
   if (!waitResult.connected || !waitResult.botToken || !waitResult.accountId) {

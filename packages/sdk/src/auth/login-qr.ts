@@ -194,7 +194,9 @@ export async function waitForWeixinLogin(opts: {
   sessionKey: string;
   apiBaseUrl: string;
   botType?: string;
+  log?: (msg: string) => void;
 }): Promise<WeixinQrWaitResult> {
+  const log = opts.log ?? ((msg: string) => process.stdout.write(msg));
   let activeLogin = activeLogins.get(opts.sessionKey);
 
   if (!activeLogin) {
@@ -230,12 +232,12 @@ export async function waitForWeixinLogin(opts: {
       switch (statusResponse.status) {
         case "wait":
           if (opts.verbose) {
-            process.stdout.write(".");
+            log(".");
           }
           break;
         case "scaned":
           if (!scannedPrinted) {
-            process.stdout.write("\n👀 已扫码，在微信继续操作...\n");
+            log("\n👀 已扫码，在微信继续操作...\n");
             scannedPrinted = true;
           }
           break;
@@ -252,7 +254,7 @@ export async function waitForWeixinLogin(opts: {
             };
           }
 
-          process.stdout.write(`\n⏳ 二维码已过期，正在刷新...(${qrRefreshCount}/${MAX_QR_REFRESH_COUNT})\n`);
+          log(`\n⏳ 二维码已过期，正在刷新...(${qrRefreshCount}/${MAX_QR_REFRESH_COUNT})\n`);
           logger.info(
             `waitForWeixinLogin: QR expired, refreshing (${qrRefreshCount}/${MAX_QR_REFRESH_COUNT})`,
           );
@@ -265,12 +267,12 @@ export async function waitForWeixinLogin(opts: {
             activeLogin.startedAt = Date.now();
             scannedPrinted = false;
             logger.info(`waitForWeixinLogin: new QR code obtained qrcode=${redactToken(qrResponse.qrcode)}`);
-            process.stdout.write(`🔄 新二维码已生成，请重新扫描\n\n`);
+            log(`🔄 新二维码已生成，请重新扫描\n\n`);
             try {
               const qrterm = await import("qrcode-terminal");
               qrterm.default.generate(qrResponse.qrcode_img_content, { small: true });
             } catch {
-              process.stdout.write(`QR Code URL: ${qrResponse.qrcode_img_content}\n`);
+              log(`QR Code URL: ${qrResponse.qrcode_img_content}\n`);
             }
           } catch (refreshErr) {
             logger.error(`waitForWeixinLogin: failed to refresh QR code: ${String(refreshErr)}`);
