@@ -1,0 +1,18 @@
+{
+  "name": "wechat_bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "微信个人号消息桥接，基于 weixin-agent-sdk 实现 iLink bot 长轮询收发消息",
+  "type": "module",
+  "scripts": {
+    "login": "tsx main.ts login",
+    "start": "tsx main.ts start"
+  },
+  "dependencies": {
+    "weixin-agent-sdk": "^0.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.8.0"
+  }
+}
