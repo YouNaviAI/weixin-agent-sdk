@@ -40,10 +40,12 @@ export interface GetUploadUrlReq {
 }
 
 export interface GetUploadUrlResp {
-  /** 原图上传加密参数 */
+  /** 原图上传加密参数（旧格式） */
   upload_param?: string;
-  /** 缩略图上传加密参数，无缩略图时为空 */
+  /** 缩略图上传加密参数，无缩略图时为空（旧格式） */
   thumb_upload_param?: string;
+  /** 原图完整上传 URL（新格式，优先使用） */
+  upload_full_url?: string;
 }
 
 export const MessageType = {
