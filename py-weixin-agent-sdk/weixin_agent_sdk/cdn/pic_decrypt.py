@@ -16,8 +16,8 @@ import re
 from dataclasses import dataclass
 
 import aiohttp
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.padding import PKCS7
 
 from weixin_agent_sdk.cdn.cdn_url import build_cdn_download_url
 from weixin_agent_sdk.util.logger import logger
@@ -36,14 +36,18 @@ CDN_DEFAULT_MAX_BYTES = 200 * 1024 * 1024  # 200 MB
 
 def encrypt_aes_ecb(plaintext: bytes, key: bytes) -> bytes:
     """使用 AES-128-ECB + PKCS7 填充加密数据。"""
-    cipher = AES.new(key, AES.MODE_ECB)
-    return cipher.encrypt(pad(plaintext, 16))
+    padder = PKCS7(128).padder()
+    padded = padder.update(plaintext) + padder.finalize()
+    encryptor = Cipher(algorithms.AES(key), modes.ECB()).encryptor()
+    return encryptor.update(padded) + encryptor.finalize()
 
 
 def decrypt_aes_ecb(ciphertext: bytes, key: bytes) -> bytes:
     """使用 AES-128-ECB + PKCS7 填充解密数据。"""
-    cipher = AES.new(key, AES.MODE_ECB)
-    return unpad(cipher.decrypt(ciphertext), 16)
+    decryptor = Cipher(algorithms.AES(key), modes.ECB()).decryptor()
+    decrypted = decryptor.update(ciphertext) + decryptor.finalize()
+    unpadder = PKCS7(128).unpadder()
+    return unpadder.update(decrypted) + unpadder.finalize()
 
 
 def aes_ecb_padded_size(plaintext_size: int) -> int:
