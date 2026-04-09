@@ -263,13 +263,21 @@ class WeixinApiClient:
     # 公开 API 方法
     # ------------------------------------------------------------------
 
-    async def get_updates(self, get_updates_buf: str = "") -> GetUpdatesResp:
+    async def get_updates(
+        self,
+        get_updates_buf: str = "",
+        timeout_ms_override: int | None = None,
+    ) -> GetUpdatesResp:
         """
         长轮询获取新消息。服务端会持有请求直到有新消息或超时。
 
-        客户端超时（long_poll_timeout_ms 内无响应）为正常情况，
-        此时返回 ret=0 的空响应，调用方应直接重试。
+        timeout_ms_override：本次请求的超时覆盖值（毫秒）。
+        省略时使用构造时传入的 long_poll_timeout_ms。
+        monitor 用此参数响应服务端返回的 longpolling_timeout_ms 建议。
+
+        客户端超时为正常情况，返回 ret=0 的空响应，调用方应直接重试。
         """
+        timeout_ms = timeout_ms_override if timeout_ms_override is not None else self.long_poll_timeout_ms
         try:
             parsed = await self.api_fetch(
                 "ilink/bot/getupdates",
@@ -277,13 +285,13 @@ class WeixinApiClient:
                     "get_updates_buf": get_updates_buf,
                     "base_info": build_base_info(),
                 },
-                self.long_poll_timeout_ms,
+                timeout_ms,
                 "getUpdates",
             )
             return GetUpdatesResp.from_dict(parsed)
         except asyncio.TimeoutError:
             logger.debug(
-                f"getUpdates: 客户端超时（{self.long_poll_timeout_ms}ms），返回空响应"
+                f"getUpdates: 客户端超时（{timeout_ms}ms），返回空响应"
             )
             return GetUpdatesResp(ret=0, get_updates_buf=get_updates_buf)
 

@@ -70,7 +70,7 @@ class WeixinConfigManager:
             fetch_ok = False
             try:
                 resp = await self.client.get_config(user_id, context_token)
-                if resp.ret == 0:
+                if resp.ret is not None and resp.ret == 0:
                     self.cache[user_id] = CacheEntry(
                         config=CachedConfig(typing_ticket=resp.typing_ticket or ""),
                         ever_succeeded=True,

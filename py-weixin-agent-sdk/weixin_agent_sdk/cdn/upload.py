@@ -153,7 +153,7 @@ async def upload_media_to_cdn(
 # 公开接口
 # ---------------------------------------------------------------------------
 
-async def upload_file_to_weixin(
+async def upload_image_to_weixin(
     file_path: str,
     to_user_id: str,
     client: WeixinApiClient,
@@ -167,7 +167,7 @@ async def upload_file_to_weixin(
         client=client,
         cdn_base_url=cdn_base_url,
         media_type=UploadMediaType.IMAGE,
-        label="uploadFileToWeixin",
+        label="uploadImageToWeixin",
         cdn_session=cdn_session,
     )
 
@@ -191,7 +191,7 @@ async def upload_video_to_weixin(
     )
 
 
-async def upload_file_attachment_to_weixin(
+async def upload_file_to_weixin(
     file_path: str,
     to_user_id: str,
     client: WeixinApiClient,
@@ -205,6 +205,6 @@ async def upload_file_attachment_to_weixin(
         client=client,
         cdn_base_url=cdn_base_url,
         media_type=UploadMediaType.FILE,
-        label="uploadFileAttachmentToWeixin",
+        label="uploadFileToWeixin",
         cdn_session=cdn_session,
     )

@@ -5,7 +5,7 @@ description = "微信 AI Agent 桥接框架 —— Python 重构版"
 requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.9",
-    "pycryptodome>=3.20",
+    "cryptography>=3.4",
     "tenacity>=8.2",
     "qrcode>=7.4",
     "rich>=13.0",

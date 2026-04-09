@@ -27,6 +27,29 @@ from weixin_agent_sdk.util.logger import logger
 WEIXIN_MEDIA_MAX_BYTES = 100 * 1024 * 1024  # 单个媒体文件上限：100 MB
 
 
+def sniff_image_mime(buf: bytes) -> str:
+    """从图片字节头部猜测 MIME 类型，未识别时回退 image/jpeg。
+
+    微信的图片消息没有 Content-Type 头，解密后是裸字节流，
+    必须靠魔术字节判别格式以便落盘时获得正确的扩展名（.jpg/.png/...）。
+    扩展名错了会导致后续 send_weixin_media_file 把图片错误地路由到
+    upload_file_to_weixin（文件附件分支），微信收到的是 .bin 而非图片。
+
+    支持 JPEG / PNG / GIF / WebP / BMP，未识别时按概率最大的 JPEG 兜底。
+    """
+    if len(buf) >= 3 and buf[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if len(buf) >= 8 and buf[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if len(buf) >= 6 and buf[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if len(buf) >= 12 and buf[:4] == b"RIFF" and buf[8:12] == b"WEBP":
+        return "image/webp"
+    if len(buf) >= 2 and buf[:2] == b"BM":
+        return "image/bmp"
+    return "image/jpeg"
+
+
 @dataclass
 class SaveMediaRequest:
     """传递给 save_media 回调的参数。"""
@@ -138,15 +161,18 @@ async def download_media_from_item(
                     session,
                     max_bytes=WEIXIN_MEDIA_MAX_BYTES,
                 )
+            # 嗅探魔术字节得到 image/jpeg|png|gif|webp|bmp，避免落地为 .bin
+            # 进而导致 send_weixin_media_file 错误路由到文件附件分支
+            sniffed_mime = sniff_image_mime(buf)
             path = await save_media(SaveMediaRequest(
                 buf=buf,
-                content_type=None,
+                content_type=sniffed_mime,
                 subdir="inbound",
                 max_bytes=WEIXIN_MEDIA_MAX_BYTES,
                 original_filename=None,
             ))
             result.decrypted_pic_path = path
-            logger.debug(f"{label} image saved: {path}")
+            logger.debug(f"{label} image saved: {path} sniffed_mime={sniffed_mime}")
         except Exception as exc:
             logger.error(f"{label} image download/decrypt failed: {exc}")
             emit_err(f"weixin {label} image download/decrypt failed: {exc}")
